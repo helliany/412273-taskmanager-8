@@ -16,8 +16,10 @@ const CardNumber = {
   min: 1
 };
 
-const FiltersWrapper = document.querySelector(`.main__filter`);
-const TasksWrapper = document.querySelector(`.board__tasks`);
+const main = document.querySelector(`.main`);
+const searchWrapper = document.querySelector(`.statistic`);
+const loadBtn = document.querySelector(`.load-more`);
+const board = document.querySelector(`.board`);
 
 const getFilterElement = (caption, amount, isDisabled = false, isChecked = false) => {
   return `
@@ -332,23 +334,30 @@ const getCardElement = () => {
 };
 
 const randomizeCards = (n) => {
-  TasksWrapper.innerHTML = ``;
+  const TasksWrapper = document.querySelector(`.board__tasks`);
+  board.removeChild(TasksWrapper);
   renderCards(n);
 };
 
 const renderFilters = () => {
+  const section = document.createElement(`section`);
+  section.className = `main__filter filter container`;
   FILTERS.forEach((filter) => {
     const count = getRandomNumber();
-    FiltersWrapper.insertAdjacentHTML(`beforeend`, getFilterElement(filter.id, count, filter.disabled, filter.checked));
-    const input = FiltersWrapper.querySelector(`.filter__input:last-of-type`);
+    section.insertAdjacentHTML(`beforeend`, getFilterElement(filter.id, count, filter.disabled, filter.checked));
+    const input = section.querySelector(`.filter__input:last-of-type`);
     input.addEventListener(`click`, () => randomizeCards(count));
   });
+  main.insertBefore(section, searchWrapper);
 };
 
 const renderCards = (number) => {
+  const div = document.createElement(`div`);
+  div.className = `board__tasks`;
   for (let i = 0; i < number; i++) {
-    TasksWrapper.insertAdjacentHTML(`beforeend`, getCardElement());
+    div.insertAdjacentHTML(`beforeend`, getCardElement());
   }
+  board.insertBefore(div, loadBtn);
 };
 
 const getRandomNumber = () => {
