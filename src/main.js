@@ -1,4 +1,5 @@
-import {FILTERS, CARD_NUMBER} from './data';
+import {FILTERS, CARD_NUMBER, task, taskList} from './data';
+import {getRandomNumber} from "./utils";
 import {getFilterElement} from "./make-filter";
 import {getCardElement} from "./make-card";
 
@@ -28,14 +29,20 @@ const renderFilters = () => {
 const renderCards = (number) => {
   const div = document.createElement(`div`);
   div.className = `board__tasks`;
-  for (let i = 0; i < number; i++) {
-    div.insertAdjacentHTML(`beforeend`, getCardElement());
+  for (let el of taskList) {
+    if (taskList.indexOf(el) > number) {
+      break;
+    }
+    div.insertAdjacentHTML(`beforeend`, el);
   }
+  // for (let i = 0; i < number; i++) {
+  //   div.insertAdjacentHTML(`beforeend`, taskList);
+  // }
+  // div.insertAdjacentHTML(`beforeend`, new Array(number)
+  //   .fill(``)
+  //   .map(() => getCardElement(createCard(task)))
+  //   .join(``));
   board.insertBefore(div, loadBtn);
-};
-
-const getRandomNumber = () => {
-  return Math.floor(Math.random() * (CARD_NUMBER.max - CARD_NUMBER.min)) + CARD_NUMBER.min;
 };
 
 renderFilters();

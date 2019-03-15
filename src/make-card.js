@@ -1,6 +1,5 @@
-export const getCardElement = () => {
-  return `
-    <article class="card card--blue">
+export default (task) => `
+    <article class="card card--${task.color}">
       <form class="card__form" method="get">
         <div class="card__inner">
           <div class="card__control">
@@ -30,7 +29,7 @@ export const getCardElement = () => {
                 class="card__text"
                 placeholder="Start typing your text here..."
                 name="text"
-              ></textarea>
+              >${task.title}</textarea>
             </label>
           </div>
 
@@ -153,7 +152,7 @@ export const getCardElement = () => {
                       class="card__hashtag-hidden-input"
                     />
                     <button type="button" class="card__hashtag-name">
-                      #repeat
+                    ${task.tags}
                     </button>
                     <button type="button" class="card__hashtag-delete">
                       delete
@@ -209,7 +208,7 @@ export const getCardElement = () => {
                 name="img"
               />
               <img
-                src="img/add-photo.svg"
+                src="${task.picture}"
                 alt="task picture"
                 class="card__img"
               />
@@ -291,4 +290,3 @@ export const getCardElement = () => {
       </form>
     </article>
 	`;
-};
