@@ -1,6 +1,7 @@
-export const getCardElement = () => {
-  return `
-    <article class="card card--blue">
+export default (task) => `
+    <article class="card card--${task.colors} 
+    ${task.isDone && +task.dueDate < Date.now() ? `card--deadline` : ``} 
+    ${Object.values(task.repeatingDays).some((val) => val === true) ? `card--repeat` : ``}">
       <form class="card__form" method="get">
         <div class="card__inner">
           <div class="card__control">
@@ -12,7 +13,7 @@ export const getCardElement = () => {
             </button>
             <button
               type="button"
-              class="card__btn card__btn--favorites card__btn--disabled"
+              class="card__btn card__btn--favorites${task.isFavorite ? `` : ` card__btn--disabled`}"
             >
               favorites
             </button>
@@ -30,7 +31,7 @@ export const getCardElement = () => {
                 class="card__text"
                 placeholder="Start typing your text here..."
                 name="text"
-              ></textarea>
+              >${task.titles}</textarea>
             </label>
           </div>
 
@@ -46,7 +47,7 @@ export const getCardElement = () => {
                     <input
                       class="card__date"
                       type="text"
-                      placeholder="23 September"
+                      placeholder="${task.dueDate.toLocaleString(`ru`, {month: `long`, day: `numeric`})}"
                       name="date"
                     />
                   </label>
@@ -54,7 +55,7 @@ export const getCardElement = () => {
                     <input
                       class="card__time"
                       type="text"
-                      placeholder="11:15 PM"
+                      placeholder="${task.dueDate.toLocaleString(`ru`, {month: `long`, day: `numeric`})}"
                       name="time"
                     />
                   </label>
@@ -64,131 +65,47 @@ export const getCardElement = () => {
                   repeat:<span class="card__repeat-status">no</span>
                 </button>
 
-                <fieldset class="card__repeat-days" disabled>
+                <fieldset class="card__repeat-days">
                   <div class="card__repeat-days-inner">
+                ${
+  Object.keys(task.repeatingDays).reduce((prev, it) => {
+    return prev + `
                     <input
                       class="visually-hidden card__repeat-day-input"
                       type="checkbox"
-                      id="repeat-mo-5"
+                      id="repeat-${it}-5"
                       name="repeat"
-                      value="mo"
+                      value="${it}"
+                      ${task.repeatingDays[it] ? `checked` : ``}
                     />
-                    <label class="card__repeat-day" for="repeat-mo-5"
-                      >mo</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-tu-5"
-                      name="repeat"
-                      value="tu"
-                      checked
-                    />
-                    <label class="card__repeat-day" for="repeat-tu-5"
-                      >tu</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-we-5"
-                      name="repeat"
-                      value="we"
-                    />
-                    <label class="card__repeat-day" for="repeat-we-5"
-                      >we</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-th-5"
-                      name="repeat"
-                      value="th"
-                    />
-                    <label class="card__repeat-day" for="repeat-th-5"
-                      >th</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-fr-5"
-                      name="repeat"
-                      value="fr"
-                      checked
-                    />
-                    <label class="card__repeat-day" for="repeat-fr-5"
-                      >fr</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      name="repeat"
-                      value="sa"
-                      id="repeat-sa-5"
-                    />
-                    <label class="card__repeat-day" for="repeat-sa-5"
-                      >sa</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-su-5"
-                      name="repeat"
-                      value="su"
-                      checked
-                    />
-                    <label class="card__repeat-day" for="repeat-su-5"
-                      >su</label
-                    >
+                  <label class="card__repeat-day" for="repeat-${it}-5">${it}</label>`;
+  }, ``)
+}
                   </div>
                 </fieldset>
               </div>
 
               <div class="card__hashtag">
                 <div class="card__hashtag-list">
-                  <span class="card__hashtag-inner">
-                    <input
-                      type="hidden"
-                      name="hashtag"
-                      value="repeat"
-                      class="card__hashtag-hidden-input"
-                    />
-                    <button type="button" class="card__hashtag-name">
-                      #repeat
-                    </button>
-                    <button type="button" class="card__hashtag-delete">
-                      delete
-                    </button>
-                  </span>
-
-                  <span class="card__hashtag-inner">
-                    <input
-                      type="hidden"
-                      name="hashtag"
-                      value="repeat"
-                      class="card__hashtag-hidden-input"
-                    />
-                    <button type="button" class="card__hashtag-name">
-                      #cinema
-                    </button>
-                    <button type="button" class="card__hashtag-delete">
-                      delete
-                    </button>
-                  </span>
-
-                  <span class="card__hashtag-inner">
-                    <input
-                      type="hidden"
-                      name="hashtag"
-                      value="repeat"
-                      class="card__hashtag-hidden-input"
-                    />
-                    <button type="button" class="card__hashtag-name">
-                      #entertaiment
-                    </button>
-                    <button type="button" class="card__hashtag-delete">
-                      delete
-                    </button>
-                  </span>
+                  ${
+  [...task.tags].reduce((prev, it) => {
+    return prev + `
+                      <span class="card__hashtag-inner">
+                        <input
+                          type="hidden"
+                          name="hashtag"
+                          value="repeat"
+                          class="card__hashtag-hidden-input"
+                        />
+                        <button type="button" class="card__hashtag-name">
+                        #${it}
+                        </button>
+                        <button type="button" class="card__hashtag-delete">
+                          delete
+                        </button>
+                      </span>`;
+  }, ``)
+}
                 </div>
 
                 <label>
@@ -209,7 +126,7 @@ export const getCardElement = () => {
                 name="img"
               />
               <img
-                src="img/add-photo.svg"
+                src="${task.picture}"
                 alt="task picture"
                 class="card__img"
               />
@@ -291,4 +208,3 @@ export const getCardElement = () => {
       </form>
     </article>
 	`;
-};

@@ -10,6 +10,6 @@ export const FILTERS = [
 
 export const CARD_NUMBER = {
   default: 7,
-  max: 15,
+  max: 16,
   min: 1
 };
