@@ -22,7 +22,15 @@ const getTask = () => ({
     `green`,
     `pink`,
   ][Math.floor(Math.random() * 5)],
-  repeatingDays: [{'mo': true, 'tu': false, 'we': true, 'th': false, 'fr': false, 'sa': true, 'su': false}, {'mo': false, 'tu': false, 'we': false, 'th': false, 'fr': false, 'sa': false, 'su': false}][Math.floor(Math.random() * 2)],
+  repeatingDays: {
+    'mo': true,
+    'tu': false,
+    'we': true,
+    'th': false,
+    'fr': false,
+    'sa': true,
+    'su': false,
+  },
   isFavorite: getRandomBoolean(),
   isDone: getRandomBoolean()
 });
