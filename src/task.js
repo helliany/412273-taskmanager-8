@@ -1,7 +1,41 @@
-export default (task) => `
-    <article class="card card--${task.colors} 
-    ${task.isDone && +task.dueDate < Date.now() ? `card--deadline` : ``} 
-    ${Object.values(task.repeatingDays).some((val) => val === true) ? `card--repeat` : ``}">
+import {createElement} from "./create-element";
+
+export class Task {
+  constructor(data) {
+    this._title = data.titles;
+    this._dueDate = data.dueDate;
+    this._tags = data.tags;
+    this._picture = data.picture;
+    this._color = data.colors;
+    this._repeatingDays = data.repeatingDays;
+    this._isDone = data.isDone;
+    this._isFavorite = data.isFavorite;
+
+    this._element = null;
+    this._onEdit = null;
+  }
+
+  _isRepeated() {
+    return Object.values(this._repeatingDays).some((it) => it === true);
+  }
+
+  _onEditButtonClick() {
+    if (typeof this._onEdit === `function`) {
+      this._onEdit();
+    }
+  }
+
+  get element() {
+    return this._element;
+  }
+  set onEdit(fn) {
+    this._onEdit = fn;
+  }
+  get template() {
+    return `
+    <article class="card card--${this._color} 
+    ${this._isDone && +this._dueDate < Date.now() ? `card--deadline` : ``} 
+    ${this._isRepeated() ? `card--repeat` : ``}">
       <form class="card__form" method="get">
         <div class="card__inner">
           <div class="card__control">
@@ -13,7 +47,7 @@ export default (task) => `
             </button>
             <button
               type="button"
-              class="card__btn card__btn--favorites${task.isFavorite ? `` : ` card__btn--disabled`}"
+              class="card__btn card__btn--favorites${this._isFavorite ? `` : ` card__btn--disabled`}"
             >
               favorites
             </button>
@@ -31,7 +65,7 @@ export default (task) => `
                 class="card__text"
                 placeholder="Start typing your text here..."
                 name="text"
-              >${task.titles}</textarea>
+              >${this._title}</textarea>
             </label>
           </div>
 
@@ -47,7 +81,7 @@ export default (task) => `
                     <input
                       class="card__date"
                       type="text"
-                      placeholder="${task.dueDate.toLocaleString(`ru`, {month: `long`, day: `numeric`})}"
+                      placeholder="${this._dueDate.toLocaleString(`ru`, {month: `long`, day: `numeric`})}"
                       name="date"
                     />
                   </label>
@@ -55,7 +89,7 @@ export default (task) => `
                     <input
                       class="card__time"
                       type="text"
-                      placeholder="${task.dueDate.toLocaleString(`ru`, {month: `long`, day: `numeric`})}"
+                      placeholder="${this._dueDate.toLocaleString(`ru`, {month: `long`, day: `numeric`})}"
                       name="time"
                     />
                   </label>
@@ -68,7 +102,7 @@ export default (task) => `
                 <fieldset class="card__repeat-days">
                   <div class="card__repeat-days-inner">
                 ${
-  Object.keys(task.repeatingDays).reduce((prev, it) => {
+  Object.keys(this._repeatingDays).reduce((prev, it) => {
     return prev + `
                     <input
                       class="visually-hidden card__repeat-day-input"
@@ -76,7 +110,7 @@ export default (task) => `
                       id="repeat-${it}-5"
                       name="repeat"
                       value="${it}"
-                      ${task.repeatingDays[it] ? `checked` : ``}
+                      ${this._repeatingDays[it] ? `checked` : ``}
                     />
                   <label class="card__repeat-day" for="repeat-${it}-5">${it}</label>`;
   }, ``)
@@ -88,7 +122,7 @@ export default (task) => `
               <div class="card__hashtag">
                 <div class="card__hashtag-list">
                   ${
-  [...task.tags].reduce((prev, it) => {
+  [...this._tags].reduce((prev, it) => {
     return prev + `
                       <span class="card__hashtag-inner">
                         <input
@@ -126,7 +160,7 @@ export default (task) => `
                 name="img"
               />
               <img
-                src="${task.picture}"
+                src="${this._picture}"
                 alt="task picture"
                 class="card__img"
               />
@@ -207,4 +241,26 @@ export default (task) => `
         </div>
       </form>
     </article>
-	`;
+	`.trim();
+  }
+
+  bind() {
+    this._element.querySelector(`.card__btn--edit`)
+        .addEventListener(`click`, this._onEditButtonClick.bind(this));
+  }
+
+  unbind() {
+    this._element.querySelector(`.card__btn--edit`)
+        .removeEventListener(`click`, this._onEditButtonClick.bind(this));
+  }
+  render() {
+    this._element = createElement(this.template);
+    this.bind();
+    return this._element;
+  }
+
+  unrender() {
+    this.unbind();
+    this._element = null;
+  }
+}
