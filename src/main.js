@@ -1,17 +1,16 @@
 import {FILTERS, CARD_NUMBER} from './data';
 import getTask from './get-task';
+import {Task} from './task';
+import {TaskEdit} from './task-edit';
 import {getRandomNumber} from "./utils";
 import {getFilterElement} from "./make-filter";
-import getCardElement from "./make-card";
 
 const main = document.querySelector(`.main`);
 const searchWrapper = document.querySelector(`.statistic`);
-const loadBtn = document.querySelector(`.load-more`);
-const board = document.querySelector(`.board`);
+const boardWrapper = document.querySelector(`.board__tasks`);
 
 const randomizeCards = (n) => {
-  const TasksWrapper = document.querySelector(`.board__tasks`);
-  board.removeChild(TasksWrapper);
+  boardWrapper.innerHTML = ``;
   renderCards(n);
 };
 
@@ -27,24 +26,38 @@ const renderFilters = () => {
   main.insertBefore(section, searchWrapper);
 };
 
-const tasksList = [];
+const tasks = [];
+const editTasks = [];
 
-const createCards = (count) => {
-  for (let i = 0; i < count; i++) {
-    tasksList.push(getCardElement(getTask()));
+const createCards = (n) => {
+  for (let i = 0; i < n; i++) {
+    const data = getTask();
+    const task = new Task(data);
+    const editTask = new TaskEdit(data);
+    tasks.push(task);
+    editTasks.push(editTask);
   }
 };
 
 const renderCards = (number) => {
-  const div = document.createElement(`div`);
-  div.className = `board__tasks`;
+  const cards = [];
   createCards(number);
-  for (let el of tasksList) {
-    if (tasksList.indexOf(el) < number) {
-      div.insertAdjacentHTML(`beforeend`, el);
+  for (let [i, el] of tasks.entries()) {
+    if (tasks.indexOf(el) < number) {
+      cards.push(el.render());
+      el.onEdit = () => {
+        editTasks[i].render();
+        boardWrapper.replaceChild(editTasks[i].element, el.element);
+        el.unrender();
+      };
+      editTasks[i].onSubmit = () => {
+        el.render();
+        boardWrapper.replaceChild(el.element, editTasks[i].element);
+        editTasks[i].unrender();
+      };
     }
   }
-  board.insertBefore(div, loadBtn);
+  boardWrapper.prepend(...cards);
 };
 
 renderFilters();
