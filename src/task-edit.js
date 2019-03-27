@@ -1,6 +1,6 @@
-import {Component} from "./component";
+import Component from "./component";
 
-export class TaskEdit extends Component {
+export default class TaskEdit extends Component {
   constructor(data) {
     super();
     this._title = data.titles;

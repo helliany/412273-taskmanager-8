@@ -1,6 +1,6 @@
 import {getRandomBoolean} from "./utils";
 
-const getTask = () => ({
+export const getTask = () => ({
   titles: [
     `Изучить теорию`,
     `Сделать домашку`,
@@ -34,5 +34,3 @@ const getTask = () => ({
   isFavorite: getRandomBoolean(),
   isDone: getRandomBoolean()
 });
-
-export default getTask;

@@ -1,13 +1,12 @@
 import {createElement} from "./create-element";
 
-export class Component {
+export default class Component {
   constructor() {
     if (new.target === Component) {
       throw new Error(`Can't instantiate BaseComponent, only concrete one.`);
     }
 
     this._element = null;
-    this._state = {};
   }
 
   get element() {

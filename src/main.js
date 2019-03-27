@@ -1,7 +1,7 @@
 import {FILTERS, CARD_NUMBER} from './data';
-import getTask from './get-task';
-import {Task} from './task';
-import {TaskEdit} from './task-edit';
+import {getTask} from './get-task';
+import Task from './task';
+import TaskEdit from './task-edit';
 import {getRandomNumber} from "./utils";
 import {getFilterElement} from "./make-filter";
 
@@ -17,12 +17,12 @@ const randomizeCards = (n) => {
 const renderFilters = () => {
   const section = document.createElement(`section`);
   section.className = `main__filter filter container`;
-  FILTERS.forEach((filter) => {
+  for (const filter of FILTERS) {
     const count = getRandomNumber(CARD_NUMBER.max, CARD_NUMBER.min);
     section.insertAdjacentHTML(`beforeend`, getFilterElement(filter.id, count, filter.disabled, filter.checked));
     const input = section.querySelector(`.filter__input:last-of-type`);
     input.addEventListener(`click`, () => randomizeCards(count));
-  });
+  }
   main.insertBefore(section, searchWrapper);
 };
 
